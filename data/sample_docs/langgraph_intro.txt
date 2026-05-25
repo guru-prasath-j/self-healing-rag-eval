@@ -1,0 +1,28 @@
+﻿LangGraph: Building Stateful Multi-Agent Applications
+
+LangGraph is an open-source library built on top of LangChain that enables the creation of stateful, multi-actor applications with large language models (LLMs). It is designed specifically for building cyclical, graph-based workflows — unlike simple linear chains.
+
+Core Concepts:
+
+1. StateGraph: The primary abstraction in LangGraph. It represents the workflow as a directed graph where nodes are functions and edges define the flow of execution.
+
+2. Nodes: Individual processing units in the graph. Each node is a Python function that receives the current state and returns a dictionary of state updates.
+
+3. Edges: Connections between nodes that define the order of execution. LangGraph supports:
+   - Standard edges: Always transition from node A to node B.
+   - Conditional edges: Choose the next node based on the current state (using a routing function).
+
+4. State: A shared data structure (typically a TypedDict) that flows through the graph. Each node can read and update the state.
+
+5. Persistence: LangGraph supports checkpointing, enabling workflows to be paused and resumed. This is useful for long-running tasks and human-in-the-loop applications.
+
+Use Cases:
+- Agentic systems that require planning, execution, and reflection loops
+- Multi-agent collaboration frameworks
+- RAG pipelines with self-correction capabilities
+- Chatbots that need to maintain complex conversational state
+
+LangGraph's cyclical nature sets it apart from sequential chains: a node can loop back to an earlier node based on conditions, making it ideal for retry logic, critic-in-the-loop workflows, and agentic decision-making.
+
+The START and END nodes are special built-in nodes that mark the entry and exit points of the graph respectively.
+

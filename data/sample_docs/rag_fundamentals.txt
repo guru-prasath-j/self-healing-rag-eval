@@ -1,0 +1,41 @@
+﻿Retrieval-Augmented Generation (RAG): Fundamentals
+
+Retrieval-Augmented Generation (RAG) is an AI framework that combines information retrieval with text generation. Instead of relying solely on the parametric knowledge stored in an LLM's weights, RAG augments the model's responses by fetching relevant documents from an external knowledge base at inference time.
+
+How RAG Works:
+
+1. Indexing Phase (done once):
+   - Source documents (PDFs, web pages, text files, etc.) are loaded and split into smaller chunks.
+   - Each chunk is converted into a vector embedding using an embedding model.
+   - Embeddings are stored in a vector database (e.g., FAISS, Chroma, Pinecone).
+
+2. Retrieval Phase (at query time):
+   - The user's question is converted into a vector embedding using the same embedding model.
+   - A similarity search finds the top-k most relevant chunks from the vector store.
+
+3. Generation Phase:
+   - The retrieved chunks are concatenated into a context string.
+   - The LLM receives both the user's question and the context, and generates an answer grounded in the retrieved information.
+
+Key Advantages of RAG:
+- Reduces hallucinations by grounding answers in real documents.
+- Allows knowledge to be updated without retraining the LLM.
+- Provides citations and traceability for generated answers.
+
+Common Embedding Models:
+- sentence-transformers/all-MiniLM-L6-v2 (fast, local, good quality)
+- text-embedding-ada-002 (OpenAI, high quality)
+- embed-english-v3.0 (Cohere)
+
+Common Vector Stores:
+- FAISS: Facebook AI Similarity Search — fast, local, no server required.
+- ChromaDB: Easy to use, supports metadata filtering.
+- Pinecone: Managed cloud vector database with high scalability.
+
+Limitations of Standard RAG:
+- Retrieval quality heavily depends on embedding quality and chunk size.
+- LLMs can still hallucinate even with context (ignoring the retrieved docs).
+- Single-shot retrieval may miss relevant information for complex questions.
+
+Advanced RAG techniques include query rewriting, hypothetical document embeddings (HyDE), re-ranking, and self-reflection/critique loops.
+
