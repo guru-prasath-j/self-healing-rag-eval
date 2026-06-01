@@ -1,0 +1,58 @@
+# Eval regression gate.
+#
+# On every push / PR to main this workflow rebuilds the index and runs the
+# golden-set evaluation. If any quality metric drops below the thresholds in
+# eval/thresholds.json, eval/evaluate.py exits non-zero and THIS BUILD FAILS —
+# blocking the merge. That is "eval-driven development": you cannot ship a change
+# that quietly makes answers worse.
+#
+# Requires a repository secret named GROQ_API_KEY. Without it, the eval step
+# skips gracefully (so forks without the secret are not blocked), and only the
+# unit tests run.
+
+name: eval-gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test-and-eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: pytest -q
+
+      - name: Build FAISS index
+        run: python ingest.py
+
+      - name: Run eval regression gate
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_HOST: ${{ secrets.LANGFUSE_HOST }}
+        run: python eval/evaluate.py
+
+      - name: Upload eval results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: eval/results/latest.json
+          if-no-files-found: ignore

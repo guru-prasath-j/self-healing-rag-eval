@@ -1,0 +1,6 @@
+# Optional, heavier evaluation extras — LLM-judged metrics.
+# The core gate in eval/evaluate.py does NOT need these (it uses local
+# embedding-based metrics). Install these only if you want RAGAS / DeepEval
+# scores as well: pip install -r requirements-eval.txt
+ragas>=0.1.0
+deepeval>=0.21.0

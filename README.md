@@ -23,6 +23,7 @@
 - [Running Tests](#-running-tests)
 - [Design Decisions](#-design-decisions)
 - [Limitations & Future Work](#-limitations--future-work)
+- [Eval Layer & CI Quality Gate](#-eval-layer--ci-quality-gate-new)
 
 ---
 
@@ -42,6 +43,36 @@ This project fixes that with a **self-healing loop**:
 5. If it still can't find a grounded answer → respond honestly: *"I don't have enough information."*
 
 The entire workflow is modelled as a **stateful, cyclical graph** using [LangGraph](https://github.com/langchain-ai/langgraph) — not a simple linear chain.
+
+---
+
+## 🧪 Eval Layer & CI Quality Gate (NEW)
+
+Self-healing fixes answers **at runtime**. This layer proves the system doesn't
+**regress over time** — it grades answers automatically and blocks any change
+that lowers quality.
+
+- **Golden set** (`eval/golden_set.json`) — fixed Q/A pairs with reference
+  answers, including one deliberately unanswerable question to test honest
+  refusal.
+- **Local metrics** (`eval/metrics.py`) — `answer_similarity`, `faithfulness`,
+  and `context_relevance`, computed with the same MiniLM embedder the pipeline
+  uses (no paid LLM judge needed), plus retries / latency / groundedness.
+- **Regression gate** (`eval/evaluate.py` + `eval/thresholds.json`) — runs the
+  golden set and **exits non-zero if any metric drops below threshold**.
+- **CI enforcement** (`.github/workflows/eval.yml`) — runs the gate on every PR;
+  a breach fails the build so the change can't merge.
+- **Observability** (`src/tracing.py`) — optional Langfuse tracing of every LLM
+  call + per-run scores; a no-op unless `LANGFUSE_*` keys are set.
+
+```bash
+python ingest.py                 # build the index
+python eval/evaluate.py          # run the eval + gate (needs GROQ_API_KEY)
+python eval/evaluate.py --no-gate  # report scores without failing
+```
+
+> New here for the eval layer? Read **[docs/EVAL_LAYER_EXPLAINED.md](docs/EVAL_LAYER_EXPLAINED.md)** —
+> a plain-language walkthrough written for a non-AI audience, with interview Q&A.
 
 ---
 

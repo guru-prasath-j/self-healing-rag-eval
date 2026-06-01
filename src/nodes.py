@@ -15,6 +15,7 @@ from langchain_core.documents import Document
 from langchain_groq import ChatGroq
 
 from .prompts import CRITIQUE_PROMPT, GENERATION_PROMPT, REFORMULATION_PROMPT
+from .tracing import get_callback_handler
 from .state import RAGState
 from .vectorstore import FAISS, retrieve
 
@@ -31,8 +32,15 @@ def _format_docs(docs: list[Document]) -> str:
 
 
 def _build_llm(model: str = "llama3-8b-8192", temperature: float = 0.0) -> ChatGroq:
-    """Instantiate a ChatGroq LLM (picks up GROQ_API_KEY from env)."""
-    return ChatGroq(model=model, temperature=temperature)
+    """
+    Instantiate a ChatGroq LLM (picks up GROQ_API_KEY from env).
+
+    If Langfuse is configured, a tracing callback is attached so every LLM call
+    in the graph is recorded as a span for observability.
+    """
+    handler = get_callback_handler()
+    callbacks = [handler] if handler else None
+    return ChatGroq(model=model, temperature=temperature, callbacks=callbacks)
 
 
 # ---------------------------------------------------------------------------

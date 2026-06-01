@@ -1,0 +1,9 @@
+{
+  "description": "Minimum acceptable scores. eval/evaluate.py exits non-zero (fails the build) if any 'min_*' metric falls below its threshold or any 'max_*' metric rises above it. Tune these as the pipeline improves so quality can only ratchet upward.",
+  "min_answer_similarity": 0.55,
+  "min_faithfulness": 0.45,
+  "min_context_relevance": 0.30,
+  "min_pass_rate": 0.70,
+  "max_avg_latency_ms": 15000,
+  "per_item_pass_similarity": 0.50
+}

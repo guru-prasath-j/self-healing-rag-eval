@@ -1,0 +1,66 @@
+{
+  "description": "Golden evaluation set for Self-Healing RAG. Each item has a question, a reference answer derived from the sample docs, and the source file the answer should come from. Used by eval/evaluate.py to score the pipeline and gate CI on regressions.",
+  "items": [
+    {
+      "id": "rag-definition",
+      "question": "What is Retrieval-Augmented Generation?",
+      "reference_answer": "Retrieval-Augmented Generation (RAG) is an AI framework that combines information retrieval with text generation. Instead of relying only on the knowledge stored in an LLM's weights, it fetches relevant documents from an external knowledge base at inference time and uses them as context to generate a grounded answer.",
+      "source": "rag_fundamentals.txt"
+    },
+    {
+      "id": "rag-phases",
+      "question": "What are the three phases of how RAG works?",
+      "reference_answer": "RAG has three phases: an indexing phase (documents are split into chunks, embedded, and stored in a vector database), a retrieval phase (the question is embedded and a similarity search finds the top-k relevant chunks), and a generation phase (the retrieved chunks plus the question are sent to the LLM, which generates a grounded answer).",
+      "source": "rag_fundamentals.txt"
+    },
+    {
+      "id": "rag-advantages",
+      "question": "Why does RAG reduce hallucinations?",
+      "reference_answer": "RAG reduces hallucinations because it grounds answers in real retrieved documents rather than the model's parametric memory. It also lets knowledge be updated without retraining the LLM and provides citations and traceability.",
+      "source": "rag_fundamentals.txt"
+    },
+    {
+      "id": "langgraph-what",
+      "question": "What is LangGraph and how is it different from a simple chain?",
+      "reference_answer": "LangGraph is an open-source library built on LangChain for building stateful, multi-actor LLM applications as cyclical, graph-based workflows. Unlike simple linear chains, a LangGraph node can loop back to an earlier node based on conditions, which makes it ideal for retry logic, critic-in-the-loop workflows, and agentic decision-making.",
+      "source": "langgraph_intro.txt"
+    },
+    {
+      "id": "langgraph-state",
+      "question": "What is state in LangGraph?",
+      "reference_answer": "State in LangGraph is a shared data structure, typically a TypedDict, that flows through the graph. Each node can read the state and return a dictionary of updates, which LangGraph merges back into the shared state.",
+      "source": "langgraph_intro.txt"
+    },
+    {
+      "id": "langgraph-edges",
+      "question": "What is the difference between standard and conditional edges in LangGraph?",
+      "reference_answer": "Standard edges always transition from one node to another in a fixed order. Conditional edges choose the next node based on the current state, using a routing function, which is what enables branching and loops.",
+      "source": "langgraph_intro.txt"
+    },
+    {
+      "id": "ai-branches",
+      "question": "What are the main branches of AI?",
+      "reference_answer": "The key branches of AI include machine learning, deep learning, natural language processing, computer vision, and robotics.",
+      "source": "ai_overview.txt"
+    },
+    {
+      "id": "ai-deep-learning",
+      "question": "What is deep learning?",
+      "reference_answer": "Deep learning is a subset of machine learning that uses neural networks with many layers to analyze data. It is responsible for advances in image recognition, natural language processing, and speech recognition.",
+      "source": "ai_overview.txt"
+    },
+    {
+      "id": "embedding-models",
+      "question": "Which embedding model does this kind of system commonly use locally?",
+      "reference_answer": "A common local embedding model is sentence-transformers/all-MiniLM-L6-v2, which is fast, runs locally, and gives good quality. Other options include OpenAI's text-embedding-ada-002 and Cohere's embed-english-v3.0.",
+      "source": "rag_fundamentals.txt"
+    },
+    {
+      "id": "out-of-scope",
+      "question": "What is the capital of France and its population in 2026?",
+      "reference_answer": "I don't have enough information in my knowledge base to answer that question accurately.",
+      "source": null,
+      "expect_refusal": true
+    }
+  ]
+}
